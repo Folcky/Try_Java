@@ -23,6 +23,7 @@
 # Source files should be UTF-8 encoded to correctly support Unicode output 
 # ------------------ End of introductory comments --------------------------------- 
 
+javafile=$1
 
 #Installation
 workdir="/home/$USER/"
@@ -141,12 +142,15 @@ then
 	echo "   warnings                      :  $warn_flag"
 	echo "   *.class removal               :  $removal"
 	echo ""
+	pwd
+	echo javac $enc $Xlint $Xdiags $javafile
+	echo java -cp . ${javafile%.*} $args
 	echo "-------------------- End of batch file messages -----------------------"
 	echo ""
 	echo ""
 	echo ""
-	javac $enc $Xlint $Xdiags $1
-	java -cp . ${1%.*} $args
+	javac $enc $Xlint $Xdiags $javafile
+	java -cp . ${javafile%.*} $args
 	if [ "$removal" = "ON" ]
 	then 
 		echo ""
@@ -194,6 +198,7 @@ else
 	echo "   warnings                      :  $warn_flag"
 	echo "   *.class removal               :  $removal"
 	echo ""
+	pwd
 	echo javac $enc -cp $all_added$add_cp -d $javac_d_switch_cp $Xlint $Xdiags $1
 	echo java -cp $javac_d_switch_cp$add_cp $package_name`basename ${1%.*}` $args
 	echo "-------------------- End of batch file messages -----------------------"
@@ -203,24 +208,25 @@ else
 	cd $pack_root_dir
 	javac $enc -cp $all_added$add_cp -d $javac_d_switch_cp $Xlint $Xdiags $1
 	java -cp $javac_d_switch_cp$add_cp $package_name`basename ${1%.*}` $args
-	echo ""
-	echo "**************************** CLEANING UP ******************************"
-	echo "*   all classes in -d cp dir(s) will be removed now;  *"
-	echo "***********************************************************************"
-	echo ""
 	
 	if [ "$removal" = "ON" ]
 	then
+		echo ""
+	        echo "**************************** CLEANING UP ******************************"
+        	echo "*   all classes in -d cp dir(s) will be removed now;  *"
+        	echo "***********************************************************************"
+        	echo ""
 
-			find $javac_d_switch_cp/$dos_pack_path -name "*.class" -type f -delete
-			if [ -f $javac_d_switch_cp/$added_path1/*.class ]
-			then
-				find $javac_d_switch_cp/$added_path1 -name "*.class" -type f -delete
-			fi
-			if [ -f $javac_d_switch_cp/$added_path2/*.class ] 
-			then
-				find $javac_d_switch_cp/$added_path2 -name "*.class" -type f -delete
-			fi
+
+		find $javac_d_switch_cp/$dos_pack_path -name "*.class" -type f -delete
+		if [ -f $javac_d_switch_cp/$added_path1/*.class ]
+		then
+			find $javac_d_switch_cp/$added_path1 -name "*.class" -type f -delete
+		fi
+		if [ -f $javac_d_switch_cp/$added_path2/*.class ] 
+		then
+			find $javac_d_switch_cp/$added_path2 -name "*.class" -type f -delete
+		fi
 	fi
 fi
 
